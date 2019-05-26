@@ -1,0 +1,232 @@
+#include <NewPing.h>
+
+
+# define LeftMotorBackward 8
+# define LeftMotorForward 9
+# define RightMotorBackward 10
+# define RightMotorForward 11
+# define Left A1
+# define Middle A0
+# define Right A3
+# define ECHO_F 12
+# define TRIG_F 7
+# define ECHO_SideR 4
+# define TRIG_SideR A4
+# define ECHO_SideL 13
+# define TRIG_SideL A5
+
+
+
+//declaring ultrasonic sensors
+NewPing sonar(TRIG_F, ECHO_F, 300);
+NewPing sonar_sideR(TRIG_SideR, ECHO_SideR,300);
+NewPing sonar_sideL(TRIG_SideL, ECHO_SideL,300);
+
+int LeftS;
+int MiddleS;
+int RightS;
+int Time_F;
+int distance_cm_F;
+int Time_SideR;
+int distance_cm_SideR;
+int Time_SideL;
+int distance_cm_SideL;
+
+
+void setup() {
+
+
+  
+// Initialise pins for line sensors
+pinMode(A1, INPUT);
+pinMode(A0, INPUT);
+pinMode(A3, INPUT);
+pinMode(ECHO_F, INPUT);
+pinMode(TRIG_F, OUTPUT);
+pinMode(ECHO_SideR, INPUT);
+pinMode(TRIG_SideR, OUTPUT);
+pinMode(ECHO_SideL, INPUT);
+pinMode(TRIG_SideL, OUTPUT);
+
+
+Serial.begin(115200);
+
+
+//Potentially try following edge of line instead of centre, eg 2 sensors, right one goes forward
+//If neither detect then turn right until detect, if both detect or if left detects alone turn left, or oipposite if left is forward
+//This should help with splitting lines and with 90 degrees
+//Could be problem on dead end, unless left sensor is the one that goes forward
+//Could use this while having 4 or 5 sensors
+
+}
+
+void loop() {
+  LeftS = digitalRead(A1);
+  MiddleS = digitalRead(A0);
+  RightS = digitalRead(A3);
+
+Time_F = sonar.ping();
+distance_cm_F = sonar.convert_cm(Time_F);//get distance in centimetres.
+
+  Time_SideR = sonar_sideR.ping();
+  distance_cm_SideR = sonar.convert_cm(Time_SideR);
+  
+  Time_SideL= sonar_sideL.ping();
+  distance_cm_SideL = sonar.convert_cm(Time_SideL);
+
+
+if((distance_cm_F <18)&& (distance_cm_F > 1)) {
+
+  MoveStop();
+  delay(100);
+
+  MoveTurnRight90();
+  delay(100);
+  
+  
+  
+}
+  else if  ((LeftS == LOW) && (MiddleS == HIGH)&& (RightS == LOW))
+  
+  
+  {// ONLY middle sensor detects line
+
+    MoveStop();
+    delay(100);
+    MoveForward();
+    delay(60);     
+    
+     
+  }
+  // CASE 2
+  else if ((LeftS == HIGH) && (MiddleS == HIGH)&& (RightS == LOW)){// BOTH left AND middle sensor detects line
+
+    MoveStop();
+    delay(50);
+    MoveTurnLeft();// Turn left slightly
+    delay(20);
+
+    /* code below added to test on 90 */
+    if((LeftS == LOW) && (MiddleS == LOW)&& (RightS == LOW)&&(distance_cm_F >18)&&(distance_cm_SideR>1)){
+       MoveStop();
+       delay(100); 
+
+       MoveTurnLeft90();
+       //delay(20); 
+    }
+  
+} 
+  }
+  // CASE 3
+  else if((LeftS == LOW) && (MiddleS == HIGH)&& (RightS == HIGH)){// BOTH right AND middle sensor detects line
+    
+    MoveStop();
+    delay(50);
+    MoveTurnRight();// Turn right slightly
+      delay(20);
+
+      
+      /*code below for testing of 90 degree*/
+      if((LeftS == LOW) && (MiddleS == LOW)&& (RightS == LOW)&&(distance_cm_F >18)&&(distance_cm_SideR>1)){
+       MoveStop();
+       delay(100); 
+
+       MoveTurnRight90();
+       //delay(20); 
+    }
+    
+  }
+  // CASE 4
+  else if((LeftS == LOW) && (MiddleS == LOW)&& (RightS == HIGH)) {// ONLY right sensor is on the line
+
+    MoveStop();
+    delay(50);
+    MoveTurnRight90();
+    //delay(30); commented out to test for 90 degree
+    
+    
+    
+    
+  }
+  // CASE 5
+  else if((LeftS == HIGH) && (MiddleS == LOW)&& (RightS == LOW)) {// ONLY left sensor is on the line
+
+    MoveStop();
+    delay(50);
+    MoveTurnLeft90();
+    //delay(30); commented out to test for 90 degree
+    
+    
+}else if((LeftS == HIGH) && (MiddleS == LOW)&& (RightS == HIGH)){ //hopefully at triangle sections
+
+   MoveStop();
+    delay(80);
+    MoveTurnLeft90();
+    delay(30);
+  
+}/*else if((LeftS == LOW) && (MiddleS == LOW)&& (RightS == LOW)&&(distance_cm_F >18)&&(distance_cm_SideR>1)){
+
+   delay(190); 
+
+   Move90degrees();
+   delay(20); 
+  
+} */
+ else if((LeftS == LOW) && (MiddleS == LOW)&& (RightS == LOW)&&(distance_cm_SideR<20)&&(distance_cm_SideR>1)){//dank wall following
+
+  
+
+while((LeftS == LOW) && (MiddleS == LOW)&& (RightS == LOW)&&(distance_cm_SideR<20)&&(distance_cm_SideR>1)){
+
+      LeftS = digitalRead(A1);
+      MiddleS = digitalRead(A0);
+      RightS = digitalRead(A3);
+    
+  Time_F = sonar.ping();
+  distance_cm_F = sonar.convert_cm(Time_F);//get distance in centimetres.
+
+
+  Time_SideR = sonar_sideR.ping();
+  distance_cm_SideR = sonar.convert_cm(Time_SideR);
+  
+  Time_SideL= sonar_sideL.ping();
+  distance_cm_SideL = sonar.convert_cm(Time_SideL);
+
+
+ 
+ if(((distance_cm_SideR) == (distance_cm_SideL))&&(distance_cm_F > 20)){
+  
+    MoveStop();
+    delay(50);
+    MoveForward();
+    delay(80);
+     
+  
+} else if((distance_cm_SideR>distance_cm_SideL)&&(distance_cm_F > 15)){
+
+  
+    MoveStop();
+    delay(40);
+    MoveTurnRight90();// Turn right slightly
+    delay(20);
+    
+} else if((distance_cm_SideR < distance_cm_SideL) && (distance_cm_F > 15)){
+
+    MoveStop();
+    delay(40);
+    MoveTurnLeft90();// Turn right slightly
+    delay(20);
+
+
+
+}else if(((distance_cm_SideR && distance_cm_SideL)<40) && (distance_cm_F < 10)&&(distance_cm_F>1)){
+
+      MoveStop();
+      delay(200);
+
+      while(1);
+  }
+  
+  }
+}}
+   
