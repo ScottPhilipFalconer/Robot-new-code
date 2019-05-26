@@ -1,0 +1,84 @@
+
+void MoveForward()
+{
+  analogWrite(5,90);//Left
+  analogWrite(6,95);//right
+  digitalWrite(LeftMotorBackward,LOW);
+  digitalWrite(LeftMotorForward,HIGH);
+  digitalWrite(RightMotorBackward,LOW);
+  digitalWrite(RightMotorForward,HIGH);
+}
+
+void Move90degrees()
+{
+  analogWrite(5,90);
+  analogWrite(6,95);
+  digitalWrite(LeftMotorBackward,HIGH);
+  digitalWrite(LeftMotorForward,LOW);
+  digitalWrite(RightMotorBackward,LOW);
+  digitalWrite(RightMotorForward,HIGH);
+}
+
+void MoveTurnRight()
+{
+  analogWrite( 5,100);
+  analogWrite(6,90);
+  digitalWrite(LeftMotorBackward,LOW);
+  digitalWrite(LeftMotorForward,HIGH);
+  digitalWrite(RightMotorBackward,LOW);
+  digitalWrite(RightMotorForward,HIGH);
+  
+}
+
+void MoveTurnLeft()
+{
+  analogWrite(5,90);
+  analogWrite(6,104);
+  digitalWrite(LeftMotorBackward,LOW);
+  digitalWrite(LeftMotorForward,HIGH);
+  digitalWrite(RightMotorBackward,LOW);
+  digitalWrite(RightMotorForward,HIGH);
+
+  
+}
+
+void MoveTurnRight90()
+{
+  analogWrite(5,90);
+  analogWrite(6,95); //changed value to 95
+  digitalWrite(LeftMotorBackward,LOW);
+  digitalWrite(LeftMotorForward,HIGH);
+  digitalWrite(RightMotorBackward,HIGH);
+  digitalWrite(RightMotorForward,LOW);
+}
+
+void MoveTurnLeft90()
+{
+  analogWrite(5,95); //changed value to 95
+  analogWrite(6,95);
+  digitalWrite(LeftMotorBackward,HIGH);
+  digitalWrite(LeftMotorForward,LOW);
+  digitalWrite(RightMotorBackward,LOW);
+  digitalWrite(RightMotorForward,HIGH);
+}
+
+void MoveStop()
+{
+  analogWrite(5,0);
+  analogWrite(6,0);
+  digitalWrite(LeftMotorBackward,LOW);
+  digitalWrite(LeftMotorForward,LOW);
+  digitalWrite(RightMotorBackward,LOW);
+  digitalWrite(RightMotorForward,LOW);
+}
+void MoveBackward()
+{
+  {
+  analogWrite(5,90);
+  analogWrite(6,95);
+  digitalWrite(LeftMotorBackward,HIGH);
+  digitalWrite(LeftMotorForward,LOW);
+  digitalWrite(RightMotorBackward,HIGH);
+  digitalWrite(RightMotorForward,LOW);
+}
+}
