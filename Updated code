@@ -114,8 +114,7 @@ if((distance_cm_F <18)&& (distance_cm_F > 1)) {
        MoveTurnLeft90();
        //delay(20); 
     }
-  
-} 
+   
   }
   // CASE 3
   else if((LeftS == LOW) && (MiddleS == HIGH)&& (RightS == HIGH)){// BOTH right AND middle sensor detects line
